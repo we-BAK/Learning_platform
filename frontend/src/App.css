@@ -1,0 +1,87 @@
+/* src/index.css or src/global.css */
+
+/* Add Tailwind CSS base, components, and utilities imports if they are not already there */
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* --- Custom Keyframe Animations for Hero Section --- */
+
+@keyframes fadeInSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSlideRight {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInSlideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(12deg);
+  }
+  50% {
+    transform: translate(15px, 15px) rotate(15deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translate(0, 0) rotate(-24deg);
+  }
+  50% {
+    transform: translate(-10px, -10px) rotate(-27deg);
+  }
+}
+
+/* Define Tailwind's custom animation utilities (if not already in tailwind.config.js) */
+/* If you are using Tailwind JIT/AOT, you might define these in tailwind.config.js extend.animation section */
+/* For a quick setup, define them directly here with the keyframes */
+/*
+.animate-fade-in-up { animation: fadeInSlideUp 1s ease-out forwards; }
+.animate-slide-in-right { animation: fadeInSlideRight 1.2s ease-out forwards; }
+.animate-slide-in-left { animation: fadeInSlideLeft 1.2s ease-out forwards; }
+.animate-float { animation: float 10s infinite alternate ease-in-out; }
+.animate-float-reverse { animation: float-reverse 11s infinite alternate ease-in-out; }
+*/
+
+/* If you need to explicitly add these classes (e.g., if not using JIT/AOT correctly) */
+.animate-fade-in-up {
+  animation: fadeInSlideUp 1s ease-out forwards;
+}
+.animate-slide-in-right {
+  animation: fadeInSlideRight 1.2s ease-out forwards;
+}
+.animate-slide-in-left {
+  animation: fadeInSlideLeft 1.2s ease-out forwards;
+}
+.animate-float {
+  animation: float 10s infinite alternate ease-in-out;
+}
+.animate-float-reverse {
+  animation: float-reverse 11s infinite alternate ease-in-out;
+}

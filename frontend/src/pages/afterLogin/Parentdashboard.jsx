@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
-import { Link } from "react-router-dom"; // For client-side routing
+import { Link } from "react-router-dom";
 import supabase from "@/lib/supabaseClient";
 
 // Component imports
@@ -10,6 +10,7 @@ import ChatTab from "../../components/Parentcomponent/ChatTab";
 import SupportingMaterialsTab from "../../components/Parentcomponent/Supportingmaterial";
 
 import logo from "../../assets/favs/logo.png"
+
 export default function ParentPortalLumina() {
   const session = useSession();
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -18,6 +19,37 @@ export default function ParentPortalLumina() {
   const [tasks, setTasks] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
 
+  // --- 1. REALTIME SUBSCRIPTION ---
+  useEffect(() => {
+    // Only subscribe if we have a session AND a child loaded
+    if (!session || !child?.id) return;
+
+    const channel = supabase
+      .channel(`chat-child-${child.id}`)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `child_id=eq.${child.id}` // Server-side filtering is more efficient
+        },
+        (payload) => {
+          setChatMessages((prev) => {
+            // Prevent duplicate messages if Realtime and Insert happen at same time
+            if (prev.find(m => m.id === payload.new.id)) return prev;
+            return [...prev, payload.new];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session, child?.id]); // Depend on child.id specifically
+
+  // --- 2. EXISTING DATA LOADING ---
   useEffect(() => {
     if (!session) {
       setChild(null);
@@ -28,6 +60,7 @@ export default function ParentPortalLumina() {
     }
 
     async function loadChildAndData() {
+      // Fetch Child
       const { data: childData, error: childError } = await supabase
         .from("children")
         .select("*")
@@ -41,59 +74,52 @@ export default function ParentPortalLumina() {
 
       setChild(childData);
 
-      // Therapist info
-      let therapistProfile = null;
-      let therapistDetails = null;
-
+      // Fetch Therapist info logic
       if (childData.therapist_id) {
-        const { data: profileData, error: profileError } = await supabase
+        const { data: profileData } = await supabase
           .from("profiles")
           .select("full_name")
           .eq("id", childData.therapist_id)
           .single();
 
-        if (!profileError) therapistProfile = profileData;
-
-        const { data: detailsData, error: detailsError } = await supabase
+        const { data: detailsData } = await supabase
           .from("therapist_details")
           .select("area_of_specialization")
           .eq("id", childData.therapist_id)
           .single();
 
-        if (!detailsError) therapistDetails = detailsData;
-      }
-
-      if (therapistProfile || therapistDetails) {
         setTherapist({
-          name: therapistProfile?.full_name || "Unknown",
-          title: therapistDetails?.area_of_specialization || "Therapist",
+          id: childData.therapist_id, // Added ID for logic reference
+          name: profileData?.full_name || "Unknown",
+          title: detailsData?.area_of_specialization || "Therapist",
         });
       } else {
         setTherapist({ name: "Not Assigned", title: "No Therapist" });
       }
 
       // Fetch tasks
-      const { data: tasksData, error: tasksError } = await supabase
+      const { data: tasksData } = await supabase
         .from("tasks")
         .select("*")
         .eq("child_id", childData.id)
         .order("created_at", { ascending: true });
 
-      if (!tasksError) setTasks(tasksData);
+      if (tasksData) setTasks(tasksData);
 
-      // Fetch chat messages
-      const { data: messagesData, error: messagesError } = await supabase
+      // Fetch initial chat messages (Using corrected column names)
+      const { data: messagesData } = await supabase
         .from("messages")
         .select("*")
         .eq("child_id", childData.id)
-        .order("sent_at", { ascending: true });
+        .order("created_at", { ascending: true });
 
-      if (!messagesError) setChatMessages(messagesData);
+      if (messagesData) setChatMessages(messagesData);
     }
 
     loadChildAndData();
   }, [session]);
 
+  // --- 3. TASK UPDATE LOGIC ---
   const handleToggleCompleted = async (taskId, newStatus) => {
     const { error } = await supabase
       .from("tasks")
@@ -113,35 +139,25 @@ export default function ParentPortalLumina() {
     }
   };
 
+  // --- 4. CHAT SEND LOGIC ---
   const handleSendMessage = async (text) => {
     if (!child) return;
 
-    const newMessage = {
-      child_id: child.id,
-      sender: "parent",
-      text,
-      sent_at: new Date().toISOString(),
-    };
-
-    // Optimistic update
-    const tempId = Math.random();
-    setChatMessages((prev) => [...prev, { ...newMessage, id: tempId }]);
-
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("messages")
-      .insert([newMessage])
-      .select();
+      .insert([
+        {
+          child_id: child.id,
+          sender_id: session.user.id,
+          sender_type: "parent",
+          message: text,
+        }
+      ]);
 
     if (error) {
       console.error("Error sending message:", error);
-      // Rollback optimistic update
-      setChatMessages((prev) => prev.filter((msg) => msg.id !== tempId));
-    } else if (data && data.length > 0) {
-      // Replace temp with actual
-      setChatMessages((prev) =>
-        prev.map((msg) => (msg.id === tempId ? data[0] : msg))
-      );
     }
+    // Realtime listener handles the UI update
   };
 
   if (!session)
@@ -160,21 +176,15 @@ export default function ParentPortalLumina() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
-      {/* Sticky Header */}
       <header className="sticky top-0 z-50 flex items-center px-8 py-4 bg-white shadow-md">
         <Link to="/" className="flex items-center space-x-3">
-          <img
-            src={logo} 
-            alt="BrightBridge Logo"
-            className="h-10 w-auto"
-          />
+          <img src={logo} alt="BrightBridge Logo" className="h-10 w-auto" />
           <span className="text-2xl font-bold text-blue-700 select-none">
             BrightBridge
           </span>
         </Link>
       </header>
 
-      {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         <SideNav
           child={child}

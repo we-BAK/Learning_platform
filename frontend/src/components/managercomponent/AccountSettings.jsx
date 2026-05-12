@@ -6,9 +6,9 @@ import { Label } from "../Ui/Label";
 
 export default function AccountSettings() {
   const [formData, setFormData] = useState({
-    fullName: "Therapist A",
-    email: "therapist@example.com",
-    role: "Therapist",
+    fullName: "Manager A",
+    email: "manager@example.com",
+    role: "Manager",
     password: "",
     confirmPassword: "",
   });
@@ -25,9 +25,15 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#fff" }}>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: "#fff" }}
+    >
       <div className="w-full max-w-2xl">
-        <Card className="rounded-3xl shadow-2xl border-0" style={{ backgroundColor: "#eff6ff" }}>
+        <Card
+          className="rounded-3xl shadow-2xl border-0"
+          style={{ backgroundColor: "#eff6ff" }}
+        >
           <CardContent className="pt-8 pb-8 px-8 space-y-8">
             {/* Avatar and Title */}
             <div className="flex items-center gap-5 mb-2">
@@ -152,6 +158,7 @@ export default function AccountSettings() {
                 Save Changes
               </Button>
             </div>
+
             {message && (
               <div className="text-green-600 text-center font-medium">
                 {message}

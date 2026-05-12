@@ -76,7 +76,7 @@ router.post('/approve_registration', async (req, res) => {
 
     // Upsert into parents
     const { error: parentError } = await supabase.from('parents').upsert({
-      user_id: userId,
+      id: userId,
       full_name: guardian_name,
       phone_number: phone,
       region,

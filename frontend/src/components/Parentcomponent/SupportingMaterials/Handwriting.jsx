@@ -1,7 +1,68 @@
 // src/components/Parentcomponent/SupportingMaterials/HandwritingPage.jsx
+import { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, Pencil, PenTool, Eraser } from 'lucide-react';
 
 export default function HandwritingPage({ onBack }) {
+  const canvasRef = useRef(null);
+  const [drawing, setDrawing] = useState(false);
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+
+  // Letters to trace
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+  // Canvas setup
+  useEffect(() => {
+    drawLetter();
+  }, [currentLetterIndex]);
+
+  const drawLetter = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw outline letter
+    ctx.font = '200px Arial';
+    ctx.fillStyle = 'rgba(79, 70, 229, 0.2)'; // Light indigo
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(letters[currentLetterIndex], canvas.width / 2, canvas.height / 2);
+
+    // Setup for drawing
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#4f46e5'; // Indigo for tracing
+  };
+
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    setDrawing(true);
+  };
+
+  const draw = (e) => {
+    if (!drawing) return;
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const ctx = canvas.getContext('2d');
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => setDrawing(false);
+
+  const clearCanvas = () => {
+    drawLetter();
+  };
+
+  const nextLetter = () => {
+    setCurrentLetterIndex((prev) => (prev + 1) % letters.length);
+    clearCanvas();
+  };
+
   return (
     <div className="p-8 bg-slate-50 min-h-full">
       <button
@@ -19,50 +80,41 @@ export default function HandwritingPage({ onBack }) {
           <h1 className="text-4xl font-extrabold text-gray-800 leading-tight">Handwriting Skills</h1>
         </div>
         <p className="text-gray-600 mb-8 text-lg">
-          Developing fine motor skills and letter formation for clear and comfortable writing.
+          Develop fine motor skills by tracing letters.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Section 1: Pre-Writing Activities */}
-          <div className="bg-purple-50 p-6 rounded-xl shadow-md border border-purple-200">
-            <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
-              <Pencil size={24} /> Pre-Writing Fun
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Activities to strengthen hand muscles and prepare for writing.
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Play with playdough: rolling, squeezing, cutting.</li>
-              <li>Practice drawing lines and shapes (circles, squares, crosses).</li>
-              <li>Use finger paints or shaving cream to draw on smooth surfaces.</li>
-              <li>Thread beads or pick up small objects with tongs.</li>
-            </ul>
-          </div>
-
-          {/* Section 2: Letter Formation */}
-          <div className="bg-indigo-50 p-6 rounded-xl shadow-md border border-indigo-200">
-            <h2 className="text-2xl font-bold text-indigo-800 mb-4 flex items-center gap-2">
-              <Eraser size={24} /> Perfecting Letter Formation
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Tips for proper grip, posture, and forming letters correctly.
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Ensure proper sitting posture and paper position.</li>
-              <li>Teach correct pencil grip (tripod grip) using grippers if needed.</li>
-              <li>Practice tracing letters and then copying them.</li>
-              <li>Use lined paper to guide letter size and alignment.</li>
-            </ul>
+        <div className="bg-indigo-50 p-6 rounded-xl shadow-md border border-indigo-200 flex flex-col items-center">
+          <h2 className="text-2xl font-bold text-indigo-800 mb-4 flex items-center gap-2">
+            <Eraser size={24} /> Trace the Letter
+          </h2>
+          <canvas
+            ref={canvasRef}
+            width={300}
+            height={300}
+            className="bg-white border border-indigo-200 rounded-xl mb-4 touch-none"
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+            onTouchStart={(e) => startDrawing(e.touches[0])}
+            onTouchMove={(e) => draw(e.touches[0])}
+            onTouchEnd={stopDrawing}
+          />
+          <div className="flex gap-4">
+            <button
+              onClick={clearCanvas}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              Clear
+            </button>
+            <button
+              onClick={nextLetter}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            >
+              Next Letter
+            </button>
           </div>
         </div>
-
-        <div className="mt-8 bg-blue-50 p-6 rounded-xl border border-blue-200 shadow-md">
-          <h3 className="text-xl font-bold text-blue-800 mb-3">💡 Tip: Make it Sensory!</h3>
-          <p className="text-gray-700">
-            Try writing letters in sand, salt, or rice. This adds a tactile element that can be very engaging and helpful for muscle memory.
-          </p>
-        </div>
-
       </div>
     </div>
   );

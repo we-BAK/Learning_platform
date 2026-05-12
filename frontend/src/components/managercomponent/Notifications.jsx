@@ -2,62 +2,94 @@ import React from "react";
 import { Card, CardContent } from "../Ui/Card";
 import { Badge } from "../Ui/Badge";
 import { Button } from "../Ui/Button";
+import {
+  Calendar,
+  Bell,
+  Users,
+  Sparkles,
+} from "lucide-react";
 
-const systemNotifications = [
+/* ======================
+   STATIC DATA
+====================== */
+
+const meetings = [
+  {
+    id: 1,
+    title: "Therapist Meeting",
+    description: "Weekly progress discussion with Therapist A.",
+    date: "May 22, 2025 • 10:00 AM",
+    with: "Therapist A",
+  },
+  {
+    id: 2,
+    title: "Parent Meeting",
+    description: "Meeting with Lily Solomon regarding Mika’s progress.",
+    date: "May 24, 2025 • 2:00 PM",
+    with: "Parent",
+  },
+];
+
+const systemUpdates = [
   {
     id: 1,
     title: "System Maintenance",
     message: "System will be updated on May 25 at 10:00 PM.",
-    type: "info",
     date: "May 19, 2025",
+    type: "System",
   },
+];
+
+const newFeatures = [
   {
-    id: 2,
+    id: 1,
     title: "New Feature Released",
     message: "Therapists can now track session notes for each student.",
-    type: "update",
     date: "May 18, 2025",
+    type: "Feature",
   },
 ];
 
 const parentRequests = [
   {
-    id: 101,
-    parentName: "Lily Solomon",
-    childName: "Mika Solomon",
+    id: 1,
+    parent: "Lily Solomon",
+    child: "Mika Solomon",
     request: "Requesting to link with Therapist A.",
     date: "May 19, 2025",
   },
-  {
-    id: 102,
-    parentName: "Daniel M.",
-    childName: "Sara M.",
-    request: "Requested therapist reassignment.",
-    date: "May 18, 2025",
-  },
 ];
+
+/* ======================
+   COMPONENT
+====================== */
 
 export default function NotificationsPage() {
   return (
-    <div className="p-4 space-y-6">
-      <h2 className="text-2xl font-semibold">Notifications</h2>
+    <div className="p-6 space-y-8">
+      <h2 className="text-2xl font-semibold flex items-center gap-2">
+        <Bell size={22} /> Notifications
+      </h2>
 
-      {/* System Notifications */}
+      {/* ================= Upcoming Meetings ================= */}
       <section>
-        <h3 className="text-xl font-medium mb-2">System Updates</h3>
+        <h3 className="text-xl font-medium mb-3 flex items-center gap-2">
+          <Calendar size={18} /> Upcoming Meetings
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {systemNotifications.map((note) => (
-            <Card key={note.id}>
-              <CardContent className="pt-4 space-y-1">
+          {meetings.map((meet) => (
+            <Card key={meet.id}>
+              <CardContent className="pt-4 space-y-2">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-medium">{note.title}</h4>
-                  <Badge variant="outline">{note.type}</Badge>
+                  <p className="font-medium">{meet.title}</p>
+                  <Badge variant="outline">Meeting</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {note.message}
+                  {meet.description}
                 </p>
-                <p className="text-xs text-right text-muted-foreground">
-                  {note.date}
+                <p className="text-xs text-muted-foreground">
+                  {meet.date}
                 </p>
               </CardContent>
             </Card>
@@ -65,22 +97,81 @@ export default function NotificationsPage() {
         </div>
       </section>
 
-      {/* Parent Requests */}
+      {/* ================= Parent Requests ================= */}
       <section>
-        <h3 className="text-xl font-medium mb-2">Parent Requests</h3>
+        <h3 className="text-xl font-medium mb-3 flex items-center gap-2">
+          <Users size={18} /> Parent Requests
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {parentRequests.map((req) => (
             <Card key={req.id}>
-              <CardContent className="pt-4 space-y-1">
-                <p className="font-medium">{req.parentName}</p>
+              <CardContent className="pt-4 space-y-2">
+                <p className="font-medium">{req.parent}</p>
                 <p className="text-sm">
-                  {req.childName} - {req.request}
+                  {req.child} — {req.request}
                 </p>
-                <p className="text-xs text-muted-foreground">{req.date}</p>
-                <div className="flex gap-2 mt-2">
-                  <Button size="sm" variant="default">Approve</Button>
-                  <Button size="sm" variant="outline">Reject</Button>
+                <p className="text-xs text-muted-foreground">
+                  {req.date}
+                </p>
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm">Approve</Button>
+                  <Button size="sm" variant="outline">
+                    Reject
+                  </Button>
                 </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= System Updates ================= */}
+      <section>
+        <h3 className="text-xl font-medium mb-3 flex items-center gap-2">
+          <Bell size={18} /> System Updates
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {systemUpdates.map((sys) => (
+            <Card key={sys.id}>
+              <CardContent className="pt-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <p className="font-medium">{sys.title}</p>
+                  <Badge variant="secondary">{sys.type}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {sys.message}
+                </p>
+                <p className="text-xs text-right text-muted-foreground">
+                  {sys.date}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= New Features ================= */}
+      <section>
+        <h3 className="text-xl font-medium mb-3 flex items-center gap-2">
+          <Sparkles size={18} /> New Features
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {newFeatures.map((feat) => (
+            <Card key={feat.id}>
+              <CardContent className="pt-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <p className="font-medium">{feat.title}</p>
+                  <Badge variant="default">{feat.type}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {feat.message}
+                </p>
+                <p className="text-xs text-right text-muted-foreground">
+                  {feat.date}
+                </p>
               </CardContent>
             </Card>
           ))}

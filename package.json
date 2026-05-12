@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "tr46": "^5.1.1"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
   }
 }

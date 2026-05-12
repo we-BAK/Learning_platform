@@ -1,7 +1,27 @@
 // src/components/Parentcomponent/SupportingMaterials/FocusOnThingsPage.jsx
-import { ArrowLeft, Brain, Eye, Target } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Target } from 'lucide-react';
 
 export default function FocusOnThingsPage({ onBack }) {
+  const [score, setScore] = useState(0);
+  const [targetIndex, setTargetIndex] = useState(Math.floor(Math.random() * 9)); // 0-8 grid
+
+  // Handle when a square is clicked
+  const handleClick = (index) => {
+    if (index === targetIndex) {
+      setScore(score + 1);
+      // Move target to a new random square
+      let newTarget;
+      do {
+        newTarget = Math.floor(Math.random() * 9);
+      } while (newTarget === targetIndex);
+      setTargetIndex(newTarget);
+    } else {
+      // Optional: give feedback
+      alert('Try again!');
+    }
+  };
+
   return (
     <div className="p-8 bg-slate-50 min-h-full">
       <button
@@ -11,59 +31,43 @@ export default function FocusOnThingsPage({ onBack }) {
         <ArrowLeft size={20} /> Back to Supporting Materials
       </button>
 
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-blue-100">
+      <div className="bg-white p-8 rounded-2xl shadow-lg border border-blue-100 flex flex-col items-center">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center shadow-inner shrink-0">
-            <Eye size={32} />
+            <Target size={32} />
           </div>
-          <h1 className="text-4xl font-extrabold text-gray-800 leading-tight">Focus & Attention Skills</h1>
+          <h1 className="text-4xl font-extrabold text-gray-800 leading-tight">Focus Game</h1>
         </div>
-        <p className="text-gray-600 mb-8 text-lg">
-          Strategies to help your child improve concentration and stay engaged in tasks.
+
+        <p className="text-gray-600 mb-6 text-lg text-center">
+          Click the square with the target 🎯 as quickly as you can to improve focus and attention!
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Section 1: Creating a Conducive Environment */}
-          <div className="bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
-            <h2 className="text-2xl font-bold text-blue-800 mb-4 flex items-center gap-2">
-              <Brain size={24} /> Optimal Learning Environment
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Setting up their space to minimize distractions and support focus.
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Designate a quiet, clutter-free area for homework/activities.</li>
-              <li>Minimize background noise (TV, loud music).</li>
-              <li>Ensure good lighting and comfortable seating.</li>
-              <li>Remove unnecessary toys or gadgets from the workspace.</li>
-            </ul>
-          </div>
-
-          {/* Section 2: Engagement Strategies */}
-          <div className="bg-pink-50 p-6 rounded-xl shadow-md border border-pink-200">
-            <h2 className="text-2xl font-bold text-pink-800 mb-4 flex items-center gap-2">
-              <Target size={24} /> Keeping Them Engaged
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Techniques to maintain attention and encourage task completion.
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Break down long tasks into shorter segments with breaks.</li>
-              <li>Use timers (e.g., "Work for 10 minutes, then break").</li>
-              <li>Incorporate movement breaks.</li>
-              <li>Use hands-on activities and visual aids.</li>
-              <li>Provide clear, concise instructions one at a time.</li>
-            </ul>
-          </div>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {[...Array(9)].map((_, index) => (
+            <div
+              key={index}
+              onClick={() => handleClick(index)}
+              className={`w-24 h-24 flex items-center justify-center rounded-lg cursor-pointer 
+                border-2 ${index === targetIndex ? 'border-green-500 bg-green-100' : 'border-gray-300 bg-gray-100'} 
+                hover:bg-gray-200 transition-colors`}
+            >
+              {index === targetIndex && <Target size={32} className="text-green-600" />}
+            </div>
+          ))}
         </div>
 
-        <div className="mt-8 bg-yellow-50 p-6 rounded-xl border border-yellow-200 shadow-md">
-          <h3 className="text-xl font-bold text-yellow-800 mb-3">💡 Tip: Gamify Focus</h3>
-          <p className="text-gray-700">
-            Turn focus exercises into games. For instance, "Find the Difference" pictures or memory games can be fun ways to train attention.
-          </p>
-        </div>
+        <p className="text-xl font-bold text-gray-800 mb-4">Score: {score}</p>
 
+        <button
+          onClick={() => {
+            setScore(0);
+            setTargetIndex(Math.floor(Math.random() * 9));
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Reset Game
+        </button>
       </div>
     </div>
   );

@@ -4,14 +4,120 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from ".
 import { Button } from "../../Ui/Button";
 
 const StepGuardianInfo = ({ formData, handleChange, handleNext }) => {
-  const regions = ["Addis Ababa", "Gambela", "Oromia", "Amhara"];
+  const regions = [
+    "Addis Ababa",
+    "Afar",
+    "Amhara",
+    "Benishangul-Gumuz",
+    "Central Ethiopia",
+    "Dire Dawa",
+    "Gambela",
+    "Harari",
+    "Oromia",
+    "Sidama",
+    "Somali",
+    "South Ethiopia",
+    "South West Ethiopia Peoples",
+    "Tigray"
+  ];
   const cities = {
-    "Addis Ababa": ["Bole", "Lideta", "Akaki"],
-    "Gambela": ["Gambela City", "Jikawo"],
-    "Oromia": ["Adama", "Bishoftu"],
-    "Amhara": ["Bahirdar", "Gondar"]
-  };
+    "Addis Ababa": [
+      "Addis Ketema",
+      "Akaky Kaliti",
+      "Arada",
+      "Bole",
+      "Gulele",
+      "Kirkos",
+      "Kolfe Keranio",
+      "Lideta",
+      "Nifas Silk-Lafto",
+      "Yeka"
+    ],
 
+    "Afar": [
+      "Semera",
+      "Asayita",
+      "Awash",
+      "Dubti"
+    ],
+
+    "Amhara": [
+      "Bahir Dar",
+      "Gondar",
+      "Dessie",
+      "Debre Markos",
+      "Debre Birhan",
+      "Woldia"
+    ],
+
+    "Benishangul-Gumuz": [
+      "Assosa",
+      "Gilgel Beles",
+      "Kamashi"
+    ],
+
+    "Central Ethiopia": [
+      "Hosaena",
+      "Wolkite",
+      "Butajira"
+    ],
+
+    "Dire Dawa": [
+      "Kezira",
+      "Sabian"
+    ],
+
+    "Gambela": [
+      "Gambela City",
+      "Itang",
+      "Jikawo"
+    ],
+
+    "Harari": [
+      "Harar",
+      "Dire Teyara"
+    ],
+
+    "Oromia": [
+      "Adama",
+      "Bishoftu",
+      "Jimma",
+      "Shashemene",
+      "Nekemte",
+      "Ambo"
+    ],
+
+    "Sidama": [
+      "Hawassa",
+      "Yirgalem",
+      "Aleta Wondo"
+    ],
+
+    "Somali": [
+      "Jigjiga",
+      "Gode",
+      "Kebri Dehar"
+    ],
+
+    "South Ethiopia": [
+      "Arba Minch",
+      "Dilla",
+      "Wolaita Sodo"
+    ],
+
+    "South West Ethiopia Peoples": [
+      "Bonga",
+      "Mizan Teferi",
+      "Tepi"
+    ],
+
+    "Tigray": [
+      "Mekelle",
+      "Axum",
+      "Adigrat",
+      "Shire"
+    ]
+  };
   const [errors, setErrors] = useState({});
 
   // Validate individual fields
@@ -118,6 +224,10 @@ const StepGuardianInfo = ({ formData, handleChange, handleNext }) => {
             <SelectContent>
               <SelectItem value="English">English</SelectItem>
               <SelectItem value="Amharic">Amharic</SelectItem>
+              <SelectItem value="Afaan Oromo">Afaan Oromo</SelectItem>
+              <SelectItem value="Tigrinya">Tigrinya</SelectItem>
+              <SelectItem value="Somali">Somali</SelectItem>
+              <SelectItem value="Sidama">Sidama</SelectItem>
             </SelectContent>
           </Select>
           {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}

@@ -1,4 +1,3 @@
-// pages/manager/ManagerDashboard.jsx
 
 import Sidebar from "../../components/sidebar/Sidebar";
 import {
@@ -9,7 +8,7 @@ import {
   Calendar,
   Bell,
   Settings,
-  LogOut, // Add this import
+  LogOut, 
 } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
@@ -22,7 +21,7 @@ const managerNavItems = [
   { label: "Schedule", icon: <Calendar size={20} />, path: "/manager/schedule" },
   { label: "Notifications", icon: <Bell size={20} />, path: "/manager/notifications" },
   { label: "Account Settings", icon: <Settings size={20} />, path: "/manager/account-settings" },
-  { label: "Logout", icon: <LogOut size={20} />, path: "/manager/logout" }, // Add logout item
+  { label: "Logout", icon: <LogOut size={20} />, path: "/manager/logout" }, 
 ];
 
 export default function GeneralManagerDashboard() {

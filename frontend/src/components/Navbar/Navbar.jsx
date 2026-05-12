@@ -1,4 +1,4 @@
-                                                            import React, { useState, useEffect, useCallback } from 'react'; 
+import React, { useState, useEffect, useCallback } from 'react'; 
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/favs/favicon.ico';
 import { Menu, X } from 'lucide-react';
@@ -73,9 +73,9 @@ const Navigation = () => {
           {/* Desktop Navigation */}
           <nav className="hidden xl:flex space-x-6" role="navigation">
             {navItems.map((item) => (
-              <a key={item.name} href={item.href} className="text-lg text-gray-700 hover:text-blue-500 transition">
+              <Link key={item.name} to={item.href} className="text-lg text-gray-700 hover:text-blue-500 transition">
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -106,14 +106,14 @@ const Navigation = () => {
           </button>
           <nav className="flex flex-col items-center mt-16 space-y-4">
             {navItems.map((item) => (
-              <a 
+              <Link 
                 key={item.name} 
-                href={item.href} 
+                to={item.href} 
                 className="text-lg text-gray-700 hover:text-blue-500 transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
             {showButtons && (
               <div className="flex flex-col space-y-2 mt-4">

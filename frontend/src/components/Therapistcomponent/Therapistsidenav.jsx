@@ -1,12 +1,28 @@
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserPlus, LogOut } from "lucide-react";
-import supabase from "@/lib/supabaseClient"; // Import supabase for logout
+import supabase from "@/lib/supabaseClient";
 
 export default function TherapistSideNav({ students, selectedStudent, onSelectStudent }) {
-  
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) window.location.href = "/login"; // Redirect after logout
-  };
+  const navigate = useNavigate();
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("Therapist logout failed:", error.message);
+        return;
+      }
+
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Unexpected logout error:", error);
+      window.location.replace("/login");
+    }
+  }, [navigate]);
 
   return (
     <aside className="w-80 h-screen flex flex-col bg-[#DBEAFE] text-blue-900 p-6 fixed shadow-xl">
@@ -31,20 +47,23 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
                   : "hover:bg-blue-100 text-blue-800"
               }`}
             >
-              {/* Avatar Circle */}
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 ${
-                selectedStudent?.id === student.id 
-                  ? "bg-white text-blue-800 border-blue-400" 
-                  : "bg-blue-300 text-blue-800 border-blue-400"
-              }`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 ${
+                  selectedStudent?.id === student.id
+                    ? "bg-white text-blue-800 border-blue-400"
+                    : "bg-blue-300 text-blue-800 border-blue-400"
+                }`}
+              >
                 {student.full_name?.charAt(0) || "?"}
               </div>
 
               <div className="overflow-hidden">
                 <p className="text-base truncate">{student.full_name}</p>
-                <p className={`text-sm truncate ${
-                  selectedStudent?.id === student.id ? "text-blue-700" : "text-blue-600"
-                }`}>
+                <p
+                  className={`text-sm truncate ${
+                    selectedStudent?.id === student.id ? "text-blue-700" : "text-blue-600"
+                  }`}
+                >
                   {student.diagnosis_summary || "No Diagnosis"}
                 </p>
               </div>
@@ -53,8 +72,8 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
         )}
       </div>
 
-      {/* Logout Button with Logic */}
-      <button 
+      <button
+        type="button"
         onClick={handleLogout}
         className="w-full flex items-center gap-3 px-4 py-3 mt-6 rounded-lg text-left text-blue-600 hover:bg-red-100 hover:text-red-700 transition-colors duration-200 group"
       >

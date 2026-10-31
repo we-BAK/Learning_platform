@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import supabase from "../lib/supabaseClient";
-import logo from "../assets/favs/logo.png"; 
+import logo from "../assets/favs/logo.png";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +72,6 @@ export default function LoginPage() {
           await supabase.auth.signOut();
           setError("Unknown role. Please contact support.");
       }
-
     } catch (err) {
       setError("Unexpected error occurred. Please try again.");
     } finally {
@@ -82,11 +82,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F5F9FF]">
       <div className="flex flex-col md:flex-row items-center shadow-lg rounded-3xl bg-white w-full max-w-5xl p-6 md:p-0">
-        
         {/* Left - Illustration */}
         <div className="md:w-1/2 p-6 hidden md:flex flex-col items-center justify-center bg-[#E3F2FD] rounded-l-3xl">
           <img
-            src="/public/assets/login.png"
+            src="/assets/login.png"
             alt="Support illustration"
             className="w-80 h-auto"
           />

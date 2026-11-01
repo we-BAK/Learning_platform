@@ -1,15 +1,17 @@
 import { UserPlus, LogOut } from "lucide-react";
-import supabase from "@/lib/supabaseClient"; // Import supabase for logout
+import supabase from "@/lib/supabaseClient";
 
 export default function TherapistSideNav({ students, selectedStudent, onSelectStudent }) {
-  
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) window.location.href = "/login"; // Redirect after logout
+
+  const handleLogout = () => {
+    void supabase.auth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.assign("/login");
   };
 
   return (
-    <aside className="w-80 h-screen flex flex-col bg-[#DBEAFE] text-blue-900 p-6 fixed shadow-xl">
+    <aside className="w-80 top-16 left-0 h-[calc(100vh-4rem)] flex flex-col bg-[#DBEAFE] text-blue-900 p-6 fixed shadow-xl z-40">
       <div className="flex justify-between items-center mb-6">
         <p className="text-blue-700 uppercase text-xs font-bold tracking-wider">Your Students</p>
         <button className="text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Add New Student">
@@ -53,10 +55,10 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
         )}
       </div>
 
-      {/* Logout Button with Logic */}
-      <button 
+      <button
+        type="button"
         onClick={handleLogout}
-        className="w-full flex items-center gap-3 px-4 py-3 mt-6 rounded-lg text-left text-blue-600 hover:bg-red-100 hover:text-red-700 transition-colors duration-200 group"
+        className="w-full flex items-center gap-3 px-4 py-3 mt-6 rounded-lg text-left text-blue-600 hover:bg-red-100 hover:text-red-700 transition-colors duration-200 group shrink-0 border-t border-blue-200"
       >
         <LogOut size={22} className="group-hover:scale-110 transition-transform duration-200" />
         <span className="font-medium">Log Out</span>

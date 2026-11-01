@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react'; 
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/favs/favicon.ico';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import supabase from '@/lib/supabaseClient';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const location = useLocation();
+
+  const handleLogout = () => {
+    void supabase.auth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.assign('/login');
+  };
 
   const handleScroll = useCallback(() => {
     const position = window.scrollY;
@@ -44,14 +52,32 @@ const Navigation = () => {
     );
   }
 
-  // Manager or Therapist Header (Only Logo)
-  if (isManagerPage || isTherapistPage) {
+  if (isManagerPage) {
     return (
       <header className="fixed w-full z-50 bg-white shadow-md p-4 flex items-center">
         <div className="flex items-center">
           <img src={logo} alt="Logo" className="w-10 h-10 mr-2" />
           <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text">BrightBridge</Link>
         </div>
+      </header>
+    );
+  }
+
+  if (isTherapistPage) {
+    return (
+      <header className="fixed w-full z-50 bg-white shadow-md p-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <img src={logo} alt="Logo" className="w-10 h-10 mr-2" />
+          <Link to="/therapist" className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text">BrightBridge</Link>
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 border border-blue-200 rounded-md hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition"
+        >
+          <LogOut size={18} />
+          Log Out
+        </button>
       </header>
     );
   }

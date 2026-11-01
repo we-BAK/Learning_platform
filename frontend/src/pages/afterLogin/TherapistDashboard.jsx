@@ -68,7 +68,7 @@ export default function TherapistDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans">
+    <div className="flex h-[calc(100vh-4rem)] bg-slate-50 font-sans">
       <TherapistSideNav
         students={students}
         selectedStudent={selectedStudent}

@@ -1,4 +1,7 @@
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserPlus, LogOut } from "lucide-react";
+import supabase from "@/lib/supabaseClient";
 import supabase from "@/lib/supabaseClient";
 
 export default function TherapistSideNav({ students, selectedStudent, onSelectStudent }) {
@@ -33,20 +36,23 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
                   : "hover:bg-blue-100 text-blue-800"
               }`}
             >
-              {/* Avatar Circle */}
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 ${
-                selectedStudent?.id === student.id 
-                  ? "bg-white text-blue-800 border-blue-400" 
-                  : "bg-blue-300 text-blue-800 border-blue-400"
-              }`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 ${
+                  selectedStudent?.id === student.id
+                    ? "bg-white text-blue-800 border-blue-400"
+                    : "bg-blue-300 text-blue-800 border-blue-400"
+                }`}
+              >
                 {student.full_name?.charAt(0) || "?"}
               </div>
 
               <div className="overflow-hidden">
                 <p className="text-base truncate">{student.full_name}</p>
-                <p className={`text-sm truncate ${
-                  selectedStudent?.id === student.id ? "text-blue-700" : "text-blue-600"
-                }`}>
+                <p
+                  className={`text-sm truncate ${
+                    selectedStudent?.id === student.id ? "text-blue-700" : "text-blue-600"
+                  }`}
+                >
                   {student.diagnosis_summary || "No Diagnosis"}
                 </p>
               </div>
@@ -55,6 +61,8 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
         )}
       </div>
 
+      <button
+        type="button"
       <button
         type="button"
         onClick={handleLogout}

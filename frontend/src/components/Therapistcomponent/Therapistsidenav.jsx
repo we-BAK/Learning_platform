@@ -1,30 +1,50 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { UserPlus, LogOut } from "lucide-react";
 import supabase from "@/lib/supabaseClient";
-import supabase from "@/lib/supabaseClient";
 
-export default function TherapistSideNav({ students, selectedStudent, onSelectStudent }) {
+export default function TherapistSideNav({
+  students,
+  selectedStudent,
+  onSelectStudent,
+}) {
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
 
-  const handleLogout = () => {
-    void supabase.auth.signOut();
+    if (error) {
+      console.error("Logout failed:", error.message);
+      return;
+    }
+
     localStorage.clear();
     sessionStorage.clear();
+
     window.location.assign("/login");
   };
 
   return (
     <aside className="w-80 top-16 left-0 h-[calc(100vh-4rem)] flex flex-col bg-[#DBEAFE] text-blue-900 p-6 fixed shadow-xl z-40">
+
+      {/* Sidebar Header */}
       <div className="flex justify-between items-center mb-6">
-        <p className="text-blue-700 uppercase text-xs font-bold tracking-wider">Your Students</p>
-        <button className="text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Add New Student">
+        <p className="text-blue-700 uppercase text-xs font-bold tracking-wider">
+          Your Students
+        </p>
+
+        <button
+          type="button"
+          className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+          title="Add New Student"
+        >
           <UserPlus size={20} />
         </button>
       </div>
 
+      {/* Students List */}
       <div className="flex-1 overflow-y-auto -mr-4 pr-4 custom-scrollbar">
         {students.length === 0 ? (
-          <p className="text-blue-500 text-sm italic text-center py-4">No students found.</p>
+          <p className="text-blue-500 text-sm italic text-center py-4">
+            No students found.
+          </p>
         ) : (
           students.map((student) => (
             <div
@@ -36,6 +56,7 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
                   : "hover:bg-blue-100 text-blue-800"
               }`}
             >
+              {/* Student Avatar */}
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 ${
                   selectedStudent?.id === student.id
@@ -46,11 +67,17 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
                 {student.full_name?.charAt(0) || "?"}
               </div>
 
+              {/* Student Information */}
               <div className="overflow-hidden">
-                <p className="text-base truncate">{student.full_name}</p>
+                <p className="text-base truncate">
+                  {student.full_name}
+                </p>
+
                 <p
                   className={`text-sm truncate ${
-                    selectedStudent?.id === student.id ? "text-blue-700" : "text-blue-600"
+                    selectedStudent?.id === student.id
+                      ? "text-blue-700"
+                      : "text-blue-600"
                   }`}
                 >
                   {student.diagnosis_summary || "No Diagnosis"}
@@ -61,16 +88,20 @@ export default function TherapistSideNav({ students, selectedStudent, onSelectSt
         )}
       </div>
 
-      <button
-        type="button"
+      {/* Logout Button */}
       <button
         type="button"
         onClick={handleLogout}
         className="w-full flex items-center gap-3 px-4 py-3 mt-6 rounded-lg text-left text-blue-600 hover:bg-red-100 hover:text-red-700 transition-colors duration-200 group shrink-0 border-t border-blue-200"
       >
-        <LogOut size={22} className="group-hover:scale-110 transition-transform duration-200" />
+        <LogOut
+          size={22}
+          className="group-hover:scale-110 transition-transform duration-200"
+        />
+
         <span className="font-medium">Log Out</span>
       </button>
+
     </aside>
   );
 }
